@@ -61,8 +61,34 @@ AT+CONA0x001583316A68
 
 (HC-06의 경우 마스터로 바꾸고 이름과 비밀번호를 똑같이 만들어주면 자동으로 연결되지만, HM-10에서는 연결되는 것과 이름은 상관이 없음)  
 
+## 아두이노 코드를 이용해 바로 연결하게 하는 방법(마스터 모듈)  
+```
+#include <SoftwareSerial.h>
 
-## 
+SoftwareSerial mySerial(2, 3); // RX, TX
+
+void setup() {
+  Serial.begin(9600);
+  mySerial.begin(9600);
+  while (!Serial) {
+    ;
+  }
+  mySerial.println("AT+CONA0x001583316A68"); // 위의 두번째 방법에 해당하는 슬레이브 모듈의 주소를 따옴표 안에 있는 문구의 'x'뒤쪽에 바꿔 넣어준다.
+  delay(100);
+}
+
+void loop() { // run over and over
+  if (mySerial.available()) {
+    Serial.write(mySerial.read());
+  }
+  if (Serial.available()) {
+    mySerial.write(Serial.read());
+  }
+}
+```
+
+
+
 ## 마스터 모듈의 도움말
 ********************************************************************
 * Command             Description			           *
