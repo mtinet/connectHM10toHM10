@@ -44,24 +44,45 @@ AT+CONN2
 ```
 
 ### 두번째 방법  
-1. 슬레이브에서 다음 커맨드를 날려 슬레이브 모듈의 MAC주소를 확인한다.  
+1. 슬레이브 MAC 주소 확인
+- 슬레이브에서 다음 커맨드를 날려 슬레이브 모듈의 MAC주소를 확인한다.    
 ```
 AT+ADDR
 //결과
 +ADDR=00:15:83:31:6A:68
 ```
-2. 마스터에서 다음과 같이 명령을 날리면 바로 연결된다. 
+- 또는, 아래 코드를 슬레이브 모듈로 사용할 아두이노에 업로드 한 다음 시리얼 모니터를 확인한다.  
+```
+#include <SoftwareSerial.h>
+
+SoftwareSerial mySerial(2, 3); // RX, TX
+String string = "";
+
+void setup() {
+  Serial.begin(9600);
+  mySerial.begin(9600);
+  while (!Serial) {
+    ;
+  }
+  mySerial.println("AT+ADDR");
+}
+
+void loop() { // run over and over
+  if (mySerial.available()) {
+    Serial.write(mySerial.read());
+  }
+  if (Serial.available()) {
+    mySerial.write(Serial.read());
+  }
+}
+```
+2. 마스터 
+- 슬레이브의 MAC주소를 확인하고 마스터에서 다음과 같이 명령을 날리면 바로 연결된다. 
 ```
 // AT+CONA + 0x + MAC 주소의 ':' 제거
 AT+CONA0x001583316A68
 ```
-
-### 연결 해제  
-1. 전원을 차단하여 연결을 해제함
-
-(HC-06의 경우 마스터로 바꾸고 이름과 비밀번호를 똑같이 만들어주면 자동으로 연결되지만, HM-10에서는 연결되는 것과 이름은 상관이 없음)  
-
-## 아두이노 코드를 이용해 바로 연결하게 하는 방법(마스터 모듈)  
+- 아두이노 코드를 이용해 바로 연결하게 하는 방법(마스터 모듈)  
 ```
 #include <SoftwareSerial.h>
 
@@ -87,7 +108,10 @@ void loop() { // run over and over
 }
 ```
 
+### 연결 해제  
+1. 전원을 차단하여 연결을 해제함
 
+(HC-06의 경우 마스터로 바꾸고 이름과 비밀번호를 똑같이 만들어주면 자동으로 연결되지만, HM-10에서는 연결되는 것과 이름은 상관이 없음)  
 
 ## 마스터 모듈의 도움말
 ********************************************************************
