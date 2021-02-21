@@ -1,8 +1,30 @@
 # connectHM10toHM10
 
 # HM-10모듈끼리 연결하기
-- 
 
+## 작업순서
+1. 아래 코드를 이용해 AT커맨드를 입력할 수 있는 상태를 만듬  
+```
+#include <SoftwareSerial.h>
+
+SoftwareSerial mySerial(2, 3); // RX, TX
+
+void setup() {
+  Serial.begin(9600);
+  mySerial.begin(9600);
+}
+
+void loop() { 
+  if (mySerial.available()) {
+    Serial.write(mySerial.read());
+  }
+  if (Serial.available()) {
+    mySerial.write(Serial.read());
+  }
+}
+```
+
+## 
 ## 마스터 모듈의 도움말
 ********************************************************************
 * Command             Description			           *
